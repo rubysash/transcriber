@@ -36,19 +36,18 @@ git clone https://github.com/rubysash/transcriber.git
 python -m venv transcriber
 cd transcriber
 Scripts\activate
+python -m pip install pip --upgrade pip
+python -m pip install -r requirements.txt
 
 # Linux/Mac
 python3 -m venv transcriber
 cd transcriber
 source bin/activate
+python3 -m pip install pip --upgrade pip
+python3 -m pip install -r requirements.txt
 ```
 
-### 3. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Install FFmpeg
+### 3. Install FFmpeg
 
 **Windows:**
 1. Download from https://ffmpeg.org/download.html
@@ -170,6 +169,7 @@ pip install -r requirements.txt
 - FFmpeg
 
 - Internet connection
+
 
 
 
