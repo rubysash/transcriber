@@ -10,7 +10,8 @@ This was created to extract the transcripts, so I can then parse it through AI f
 
 ## Screenshot
 
-~[Transcriber Demo](https://github.com/rubysash/transcriber/blob/main/transcriber.png?raw=true)
+![Transcriber Demo](https://github.com/rubysash/transcriber/blob/main/transcriber.png?raw=true)
+
 
 ## Features
 
@@ -169,4 +170,5 @@ pip install -r requirements.txt
 - FFmpeg
 
 - Internet connection
+
 
