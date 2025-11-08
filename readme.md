@@ -2,6 +2,12 @@
 
 Transcribe videos from YouTube, Vimeo, 900+ sites, or local files using OpenAI's Whisper.
 
+I absolutely HATE watching videos "Hey guys, what's up, smash the like, here is my dog, etc". 
+
+This was created to extract the transcripts, so I can then parse it through AI for the juicy bits.
+
+`Summarize this transcript into things I should know, or do to be better at this topic:`
+
 ## Features
 
 - YouTube, Vimeo, and 900+ video sites via yt-dlp
@@ -10,24 +16,26 @@ Transcribe videos from YouTube, Vimeo, 900+ sites, or local files using OpenAI's
 - Dark theme GUI
 - Auto-saves transcripts to `/transcripts/` folder
 - Auto-copies to clipboard
+- Optionally rip out the mp3 of the audio if desired.
 
 ## Installation
 
 ### 1. Clone Repository
 ```bash
-git clone <your-repo-url>
-cd yt-transcriber
+git clone [https://github.com/rubysash/transcriber.git](https://github.com/rubysash/transcriber.git)
 ```
 
 ### 2. Create Virtual Environment
 ```bash
 # Windows
-python -m venv venv
-venv\Scripts\activate
+python -m venv transcriber
+cd transcriber
+Scripts\activate
 
 # Linux/Mac
-python3 -m venv venv
-source venv/bin/activate
+python3 -m venv transcriber
+cd transcriber
+source bin/activate
 ```
 
 ### 3. Install Dependencies
@@ -155,4 +163,5 @@ pip install -r requirements.txt
 - Python 3.8+
 - 4GB+ RAM (8GB+ for medium/large models)
 - FFmpeg
+
 - Internet connection
