@@ -142,6 +142,10 @@ transcripts/
 
 ## Troubleshooting
 
+**Any yt-dlp Errors**
+- update it, yt always trying to force it to break
+- `python -m pip install -U yt-dlp`
+
 **"FFmpeg not found"**
 - Windows: Check `FFMPEG_PATH` in `config.py`
 - Linux/Mac: Run `ffmpeg -version`
@@ -169,6 +173,7 @@ pip install -r requirements.txt
 - FFmpeg
 
 - Internet connection
+
 
 
 
