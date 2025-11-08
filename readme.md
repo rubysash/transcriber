@@ -1,5 +1,7 @@
 # YouTube Video Transcriber
 
+**warning** - this will install at least 3GB of files, and 5.5 or more if you use the larger models beyond "tiny".   Expect to use "medium" at least, which will put total install to almost 6GB.
+
 Transcribe videos from YouTube, Vimeo, 900+ sites, or local files using OpenAI's Whisper.
 
 I absolutely HATE watching videos "Hey guys, what's up, smash the like, here is my dog, etc". 
@@ -173,6 +175,7 @@ pip install -r requirements.txt
 - FFmpeg
 
 - Internet connection
+
 
 
 
