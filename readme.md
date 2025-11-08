@@ -8,6 +8,10 @@ This was created to extract the transcripts, so I can then parse it through AI f
 
 `Summarize this transcript into things I should know, or do to be better at this topic:`
 
+## Screenshot
+
+~[Transcriber Demo](https://github.com/rubysash/transcriber/blob/main/transcriber.png?raw=true)
+
 ## Features
 
 - YouTube, Vimeo, and 900+ video sites via yt-dlp
@@ -165,3 +169,4 @@ pip install -r requirements.txt
 - FFmpeg
 
 - Internet connection
+
