@@ -27,7 +27,7 @@ This was created to extract the transcripts, so I can then parse it through AI f
 
 ### 1. Clone Repository
 ```bash
-git clone [https://github.com/rubysash/transcriber.git](https://github.com/rubysash/transcriber.git)
+git clone https://github.com/rubysash/transcriber.git
 ```
 
 ### 2. Create Virtual Environment
@@ -170,5 +170,6 @@ pip install -r requirements.txt
 - FFmpeg
 
 - Internet connection
+
 
 
