@@ -1,3 +1,5 @@
+--extra-index-url https://download.pytorch.org/whl/cu124
+
 anyio==4.11.0
 av==16.0.1
 certifi==2025.1.31
@@ -39,10 +41,9 @@ shellingham==1.5.4
 sniffio==1.3.1
 sympy==1.14.0
 tokenizers==0.22.1
-torch==2.4.1+cu124
+torch==2.4.1
 tqdm==4.67.1
 typer-slim==0.20.0
 typing_extensions==4.15.0
 urllib3==2.5.0
-youtube-transcript-api==1.2.3
 yt-dlp==2025.10.22
