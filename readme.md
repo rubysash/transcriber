@@ -173,12 +173,19 @@ pip install -r requirements.txt
 - Python 3.8+
 - 4GB+ RAM (8GB+ for medium/large models)
 - FFmpeg
-
 - Internet connection
 
+## Update Process
 
+yt-dlp does need updates periodically
 
-
+```bash
+# Windows
+cd transcriber
+Scripts\activate
+python -m pip install pip --upgrade pip setuptools wheel
+python -m pip install --upgrade yt-dlp
+```
 
 
 
