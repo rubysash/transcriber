@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-YouTube audio downloader module
+YouTube audio/video downloader module
 """
 import traceback
 from pathlib import Path
@@ -14,84 +14,85 @@ def sanitize_filename(title):
     safe = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_'))
     safe = safe.strip()[:100]
     if not safe:
-        safe = "transcript"
-    logger.debug(f"Sanitized to: {safe}")
+        safe = "video"
     return safe
 
-def download_audio(url, output_dir):
-    """Download audio from YouTube URL"""
-    logger.section("STARTING AUDIO DOWNLOAD")
+def download_media(url, output_dir, type="audio"):
+    """
+    Download media from URL
+    type: "audio" or "video"
+    """
+    logger.section(f"STARTING {type.upper()} DOWNLOAD")
     logger.debug(f"URL: {url}")
-    logger.debug(f"Output directory: {output_dir}")
     
     try:
         import yt_dlp
-        
-        output_path = output_dir / "temp_audio"
-        logger.debug(f"Output template: {output_path}")
-        
-        ydl_opts = {
-            'format': 'bestaudio/best',
-            'outtmpl': str(output_path),
-            'quiet': False,  # Show yt-dlp output for debugging
-            'no_warnings': False,
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192',
-            }],
-        }
-        
-        logger.debug("Creating YoutubeDL instance")
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            logger.debug("Extracting video info")
+
+        # Extract info
+        logger.debug("Extracting video info")
+        ydl_opts_info = {'quiet': True, 'no_warnings': True}
+        with yt_dlp.YoutubeDL(ydl_opts_info) as ydl:
             info = ydl.extract_info(url, download=False)
+            video_id = info.get('id', 'temp')
             title = info.get('title', 'unknown')
-            duration = info.get('duration', 0)
-            logger.info(f"Video: {title}")
-            logger.info(f"Duration: {duration/60:.1f} minutes")
             
-            logger.debug("Starting download")
+        safe_title = sanitize_filename(title)
+        
+        if type == "audio":
+            output_path_base = output_dir / f"audio_{video_id}"
+            ydl_opts = {
+                'format': 'bestaudio/best',
+                'outtmpl': str(output_path_base),
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '192',
+                }],
+            }
+            suffix = ".mp3"
+        else:
+            # Video: best quality with audio merged
+            output_path_base = output_dir / f"{safe_title}_{video_id}"
+            ydl_opts = {
+                'format': 'bestvideo+bestaudio/best',
+                'outtmpl': str(output_path_base) + ".%(ext)s",
+                'merge_output_format': 'mp4',
+            }
+            suffix = ".mp4"
+
+        logger.debug(f"Starting {type} download...")
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
-        
-        logger.debug("Download command completed")
-        
-        # Find the downloaded file
-        logger.debug("Looking for downloaded audio file")
-        audio_file = output_path.with_suffix('.mp3')
-        logger.debug(f"Expected file: {audio_file}")
-        
-        if not audio_file.exists():
-            logger.debug("Expected file not found, searching directory")
-            files = list(output_dir.glob('temp_audio.*'))
-            logger.debug(f"Found files: {files}")
-            if files:
-                audio_file = files[0]
-                logger.debug(f"Using: {audio_file}")
-            else:
-                logger.error("No audio file found!")
-                logger.debug(f"Directory contents: {list(output_dir.iterdir())}")
-                raise FileNotFoundError("Audio file not found after download")
-        
-        file_size = audio_file.stat().st_size / (1024 * 1024)
-        logger.success(f"Downloaded: {audio_file.name} ({file_size:.1f} MB)")
-        
-        return audio_file, title
-        
+
+        # Find the file
+        if type == "audio":
+            final_file = output_path_base.with_suffix(suffix)
+        else:
+            # For video, it might have added .mp4 automatically
+            final_file = Path(str(output_path_base) + suffix)
+            if not final_file.exists():
+                # Search for any file starting with title_id
+                matches = list(output_dir.glob(f"{safe_title}_{video_id}.*"))
+                if matches: final_file = matches[0]
+
+        if not final_file.exists():
+            raise FileNotFoundError(f"Media file not found after download: {final_file}")
+
+        logger.success(f"Downloaded: {final_file.name}")
+        return final_file, title
+
     except Exception as e:
         logger.error(f"Download failed: {e}")
-        logger.debug(f"Traceback:\n{traceback.format_exc()}")
         raise
+
+def download_audio(url, output_dir):
+    """Legacy wrapper for audio"""
+    return download_media(url, output_dir, type="audio")
 
 def cleanup_audio(audio_file):
     """Delete temporary audio file"""
-    logger.debug(f"Cleaning up audio file: {audio_file}")
     try:
         if audio_file.exists():
             audio_file.unlink()
-            logger.success("Audio file deleted")
-        else:
-            logger.debug("Audio file already deleted or not found")
-    except Exception as e:
-        logger.error(f"Failed to delete audio file: {e}")
-        logger.debug(f"Traceback:\n{traceback.format_exc()}")
+            logger.debug("Deleted temporary file")
+    except: pass

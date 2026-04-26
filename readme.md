@@ -1,191 +1,86 @@
-# YouTube Video Transcriber
+# Media Downloader & Transcriber
 
-**warning** - this will install at least 3GB of files, and 5.5GB or more if you use the larger models beyond "tiny".   Expect to use "medium" at least, which will put total install to almost 6GB. You can get away with most things using "tiny" model, see the example in this document to see the quality difference.
+**Warning:** Using larger Whisper models (medium/large) requires 4GB to 8GB of disk space and significant RAM. The "tiny" model is fast (~75MB) and good for testing, while "medium" is recommended for high-quality production transcripts.
 
-Transcribe videos from YouTube, Vimeo, 900+ sites, or local files using OpenAI's Whisper.
-
-I absolutely HATE watching videos "Hey guys, what's up, smash the like, here is my dog, etc". 
-
-This was created to extract the transcripts, so I can then parse it through AI for the juicy bits.
-
-`Summarize this transcript into things I should know, or do to be better at this topic:`
-
-## Screenshot
-
-![Transcriber Demo](https://github.com/rubysash/transcriber/blob/main/transcriber.png?raw=true)
-
+Transcribe audio or download video from YouTube, Vimeo, and 900+ other sites using OpenAI's Whisper and yt-dlp.
 
 ## Features
 
-- YouTube, Vimeo, and 900+ video sites via yt-dlp
-- Local video/audio file support (MP4, MP3, WAV, etc.)
-- Multiple Whisper model sizes (tiny to large)
-- Dark theme GUI
-- Auto-saves transcripts to `/transcripts/` folder
-- Auto-copies to clipboard
-- Optionally rip out the mp3 of the audio if desired.
+- **Multi-Source Support:** YouTube, Vimeo, Twitter/X, TikTok, and 900+ more via yt-dlp.
+- **Audio & Video Downloads:** Choose to download just the MP3 audio or the full MP4 video.
+- **Skip Transcription Mode:** Use as a standalone downloader to quickly grab media without running AI models.
+- **Background Processing:** The GUI remains fully responsive while downloading and transcribing.
+- **Unique File Naming:** Automatically uses video IDs in temporary filenames to prevent collisions.
+- **Multiple Whisper Models:** Supports `tiny`, `base`, `small`, `medium`, and `large` models.
+- **Auto-Save & Clipboard:** Transcripts are auto-saved to the `transcripts/` folder and copied to your clipboard.
 
 ## Installation
 
 ### 1. Clone Repository
 ```bash
 git clone https://github.com/rubysash/transcriber.git
+cd transcriber
 ```
 
 ### 2. Create Virtual Environment
 ```bash
 # Windows
-python -m venv transcriber
-cd transcriber
+python -m venv .
 Scripts\activate
-python -m pip install pip --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install --upgrade pip
+pip install -r requirements.txt
 
 # Linux/Mac
-python3 -m venv transcriber
-cd transcriber
+python3 -m venv .
 source bin/activate
-python3 -m pip install pip --upgrade pip
-python3 -m pip install -r requirements.txt
+python3 -m pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
 ### 3. Install FFmpeg
 
 **Windows:**
-1. Download from https://ffmpeg.org/download.html
-2. Extract to `C:\ffmpeg\`
-3. Or edit `config.py` with your FFmpeg path
+1. Download from [ffmpeg.org](https://ffmpeg.org/download.html).
+2. Extract to `C:\ffmpeg\bin`.
+3. Verify or edit `FFMPEG_PATH` in `config.py`.
 
-**Linux:**
-```bash
-sudo apt install ffmpeg
-```
-
-**Mac:**
-```bash
-brew install ffmpeg
-```
+**Linux:** `sudo apt install ffmpeg`  
+**Mac:** `brew install ffmpeg`
 
 ## Usage
 
+### GUI Mode (Recommended)
 ```bash
 python main_gui.py
 ```
+1. Enter a URL or **Browse** for a local file.
+2. Select **Download Type** (audio/video).
+3. Select **Whisper Model** (ignored if skipping transcription).
+4. Check **Skip Transcription** if you only want to download the file.
+5. Click **Run Task**.
 
-1. Enter YouTube URL or click **Browse** for local file
-2. Select model size (tiny/base/small/medium/large)
-3. Click **Start Transcription**
-4. Transcript auto-saves to `transcripts/` folder and copies to clipboard
+### CLI Mode
+```bash
+python main_cli.py [URL]
+```
 
 ## Configuration
 
-Edit `config.py`:
-```python
-# FFmpeg path (Windows only)
-FFMPEG_PATH = r"C:\ffmpeg\bin"
-
-# Default model
-DEFAULT_MODEL_SIZE = "tiny"
-
-# Debug logging (True = verbose, False = quiet)
-DEBUG_MODE = False
-```
-
-## Model Sizes
-
-Models download automatically on first use and are cached.
-
-| Model | Size | Speed | Accuracy | First Download |
-|-------|------|-------|----------|----------------|
-| **tiny** | ~75MB | Fast | Good | 10-30 seconds |
-| **base** | ~150MB | Fast | Better | 30-60 seconds |
-| **small** | ~500MB | Medium | Great | 1-2 minutes |
-| **medium** | ~1.5GB | Slow | Excellent | 2-5 minutes |
-| **large** | ~3GB | Very Slow | Best | 5-10 minutes |
-
-**Recommendation:** Start with `tiny` for testing, use `medium` for production.
-
-## Model Quality Example
-
-Same audio transcribed with different models:
-
-### Tiny Model (~75MB, 2 minutes)
-```
-[0:01:00] What happens though is people say they don't need me motivation 
-and I say well that's interesting. That's not what I do. I'm the [wide] guy.
-[0:01:41] But we all know that that's bullshit at times you don't work in 
-[yourself] interest all the time
-```
-*Errors: "wide" → "why", "yourself" → "your self"*
-
-### Medium Model (~1.5GB, several minutes)
-```
-[0:01:01] What happens though is people say to me, I don't need any motivation.
-[0:01:04] I say, well that's interesting, that's not what I do.
-[0:01:06] I'm the why guy.
-[0:01:42] We all know that that's bullshit at times.
-[0:01:45] You don't work in your self interest all the time.
-```
-*Accurate words, better punctuation, precise timing*
-
-## Supported Sites
-
-Via yt-dlp: YouTube, Vimeo, Twitter/X, Reddit, Facebook, TikTok, Twitch, and 890+ more.
-
-## Output
-
-Transcripts save to `transcripts/` folder:
-```
-transcripts/
-├── Video Title.txt
-├── Video Title_1.txt  (if duplicate)
-└── transcriber_gui.log
-```
+Edit `config.py` to change defaults:
+- `FFMPEG_PATH`: Path to your FFmpeg binaries.
+- `DEFAULT_MODEL_SIZE`: Default Whisper model to use.
+- `DEVICE`: Set to `"cpu"` or `"cuda"` (if you have an Nvidia GPU and CUDA installed).
 
 ## Troubleshooting
 
-**Any yt-dlp Errors**
-- update it, yt always trying to force it to break
-- `python -m pip install -U yt-dlp`
-
-**"FFmpeg not found"**
-- Windows: Check `FFMPEG_PATH` in `config.py`
-- Linux/Mac: Run `ffmpeg -version`
-
-**"Module not found"**
-```bash
-pip install -r requirements.txt
-```
-
-**Model download fails**
-- Check internet connection
-- Delete `~/.cache/huggingface/hub/` and retry
-
-**Poor transcription quality**
-- Use larger model (medium or large)
-- Ensure clear audio in source
-
-**Too much debug output**
-- Set `DEBUG_MODE = False` in `config.py`
+- **WinError 1114:** Ensure you have the [Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe) installed. This is common on fresh Windows installs.
+- **yt-dlp Errors:** Video sites frequently update their code. Run `pip install -U yt-dlp` to get the latest fix.
+- **GUI Freezes:** Model download can be up to 8GB on the first run.   Subsequent runs of the same model should be fast.
+- **Symlink Warnings:** On Windows, if you see warnings about symlinks, you can safely ignore them or enable "Developer Mode" in Windows settings.
 
 ## Requirements
 
-- Python 3.8+
-- 4GB+ RAM (8GB+ for medium/large models)
-- FFmpeg
-- Internet connection
-
-## Update Process
-
-yt-dlp does need updates periodically
-
-```bash
-# Windows
-cd transcriber
-Scripts\activate
-python -m pip install pip --upgrade pip setuptools wheel
-python -m pip install --upgrade yt-dlp
-```
-
-
-
+- Tested on 3.13
+- 4GB+ RAM (8GB+ recommended for larger models)
+- FFmpeg installed and in PATH (or configured in `config.py`)
+- Internet connection (for downloads and first-time model caching)
